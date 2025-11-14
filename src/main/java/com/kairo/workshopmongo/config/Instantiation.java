@@ -1,6 +1,8 @@
 package com.kairo.workshopmongo.config;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
@@ -27,18 +29,30 @@ public class Instantiation implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		
 		userRepository.deleteAll();
 		postRepository.deleteAll();
+		
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+		LocalDate d1 = LocalDate.parse("21/03/2018", fmt);
+		LocalDate d2 = LocalDate.parse("23/03/2018", fmt);
+
+		Instant inst1 = d1.atStartOfDay(ZoneId.of("GMT")).toInstant();
+		Instant inst2 = d2.atStartOfDay(ZoneId.of("GMT")).toInstant();
 		
 		User maria = new User(null, "Maria Brown", "maria@gmail.com");
 		User alex = new User(null, "Alex Green", "alex@gmail.com");
 		User bob = new User(null, "Bob Grey", "bob@gmail.com");	
 		userRepository.saveAll(Arrays.asList(maria, alex, bob));
 		
-		Post post1 = new Post(null, LocalDate.parse("21/03/2018", fmt), "Partiu viagem", "Vou viajar para São Paulo, Abraços!", new AuthorDTO(maria));
-		Post post2 = new Post(null, LocalDate.parse("23/03/2018", fmt), "Bom dia", "Acordei feliz hoje", new AuthorDTO(maria));
+		Post post1 = new Post(null, inst1, "Partiu viagem",
+		        "Vou viajar para São Paulo, Abraços!", new AuthorDTO(maria));
+
+		Post post2 = new Post(null, inst2, "Bom dia",
+		        "Acordei feliz hoje", new AuthorDTO(maria));
+		
+//		Post post1 = new Post(null, Instant.from(fmt.parse("21/03/2018"), "Partiu viagem", "Vou viajar para São Paulo, Abraços!", new AuthorDTO(maria));
+//		Post post2 = new Post(null, Instant.from(fmt.parse("21/03/2018"), "Bom dia", "Acordei feliz hoje", new AuthorDTO(maria));
 		
 		CommentDTO c1 = new CommentDTO("Boa viagem mano!", LocalDate.parse("21/03/2018", fmt), new AuthorDTO(alex));
 		CommentDTO c2 = new CommentDTO("Aproveite", LocalDate.parse("22/03/2018", fmt), new AuthorDTO(bob));

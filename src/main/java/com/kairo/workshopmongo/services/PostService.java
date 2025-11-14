@@ -1,5 +1,8 @@
 package com.kairo.workshopmongo.services;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +15,7 @@ import com.kairo.workshopmongo.services.exception.ObjectNotFoundException;
 
 @Service
 public class PostService {
-	
+
 	@Autowired
 	private PostRepository repo;
 
@@ -24,4 +27,13 @@ public class PostService {
 	public List<Post> findByTitle(String text) {
 		return repo.searchTitle(text);
 	}
+	
+	public List<Post> fullSearch(String text, Instant minDate, Instant maxDate) {
+	    // Ajusta maxDate
+	    Instant max = maxDate.plusSeconds(86400);
+	    return repo.fullSearch(text, minDate, max);
+	}
+
+
+
 }
